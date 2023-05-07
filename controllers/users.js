@@ -21,6 +21,9 @@ async function getUserById(req, res, next) {
 
     res.send(user);
   } catch (err) {
+    if (err.name === 'CastError') {
+      next(new BadRequest('переданы некорректные данные'));
+    }
     next(err);
   }
 }
