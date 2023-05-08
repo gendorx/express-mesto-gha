@@ -1,6 +1,5 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const router = require('./routes');
 const handleError = require('./middlewares/handleError');
@@ -15,8 +14,8 @@ mongoose.connect(DATABASE_URL, {
 
 // Middlewares
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use((req, _res, next) => {
