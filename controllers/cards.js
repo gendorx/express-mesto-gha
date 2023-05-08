@@ -49,7 +49,6 @@ async function toggleLike(fnName, req, res, next) {
 
     res.send(card);
   } catch (err) {
-    console.log(err);
     if (err instanceof CastError) {
       next(new BadRequest('переданы некорректные данные'));
     } else {
