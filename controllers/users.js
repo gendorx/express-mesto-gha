@@ -23,8 +23,9 @@ async function getUserById(req, res, next) {
   } catch (err) {
     if (err.name === 'CastError') {
       next(new BadRequest('переданы некорректные данные'));
+    } else {
+      next(err);
     }
-    next(err);
   }
 }
 

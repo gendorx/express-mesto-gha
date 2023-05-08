@@ -45,7 +45,11 @@ async function addLike(req, res, next) {
 
     res.send(card);
   } catch (err) {
-    next(err);
+    if (err.name === 'CastError') {
+      next(new BadRequest('переданы некорректные данные'));
+    } else {
+      next(err);
+    }
   }
 }
 
@@ -66,7 +70,11 @@ async function removeLike(req, res, next) {
 
     res.send(card);
   } catch (err) {
-    next(err);
+    if (err.name === 'CastError') {
+      next(new BadRequest('переданы некорректные данные'));
+    } else {
+      next(err);
+    }
   }
 }
 
