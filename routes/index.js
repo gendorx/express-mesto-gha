@@ -9,7 +9,7 @@ router.use('/users', usersRouter);
 router.use('/cards', cardsRouter);
 
 router.all('*', (req, res, next) => {
-  next(NotFound('неверный адрес запроса'));
+  next(new NotFound('неверный адрес запроса'));
 });
 
 module.exports = router;

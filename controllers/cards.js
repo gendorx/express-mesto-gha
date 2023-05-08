@@ -16,7 +16,7 @@ async function createCard(req, res, next) {
   const userId = req.user._id;
 
   try {
-    const card = (await Card.create({ name, link, owner: userId }));
+    const card = await Card.create({ name, link, owner: userId });
 
     res.send(card);
   } catch (err) {
@@ -90,7 +90,7 @@ async function removeCard(req, res, next) {
 
     res.send(card);
   } catch (err) {
-    if (err.name === 'ValidationError') {
+    if (err.name === 'ValidationError' || err.name === 'CastError') {
       next(new BadRequest('переданы некорректные данные'));
     } else {
       next(err);
