@@ -1,8 +1,12 @@
+const {
+  constants: { HTTP_STATUS_BAD_REQUEST },
+} = require('http2');
+
 class BadRequest extends Error {
   constructor(message) {
     super(message);
 
-    this.statusCode = 400;
+    this.statusCode = HTTP_STATUS_BAD_REQUEST;
   }
 }
 

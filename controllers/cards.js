@@ -1,9 +1,15 @@
+const {
+  Error: { ValidationError, CastError },
+} = require('mongoose');
+const {
+  constants: { HTTP_STATUS_CREATED },
+} = require('http2');
 const Card = require('../models/card');
 const { NotFound, BadRequest } = require('../utils/errors');
 
 async function getCards(req, res, next) {
   try {
-    const cards = await Card.find({}).populate('owner');
+    const cards = await Card.find({}).populate(['owner', 'likes']);
 
     res.send(cards);
   } catch (err) {
@@ -18,9 +24,9 @@ async function createCard(req, res, next) {
   try {
     const card = await Card.create({ name, link, owner: userId });
 
-    res.send(card);
+    res.status(HTTP_STATUS_CREATED).send(card);
   } catch (err) {
-    if (err.name === 'ValidationError') {
+    if (err instanceof ValidationError) {
       next(new BadRequest('переданы некорректные данные'));
     } else {
       next(err);
@@ -37,15 +43,13 @@ async function addLike(req, res, next) {
       cardId,
       { $addToSet: { likes: userId } },
       { new: true },
-    )
-      .populate('owner')
-      .populate('likes');
+    ).populate(['owner', 'likes']);
 
     if (!card) throw new NotFound('карточка не найдена');
 
     res.send(card);
   } catch (err) {
-    if (err.name === 'CastError') {
+    if (err instanceof CastError) {
       next(new BadRequest('переданы некорректные данные'));
     } else {
       next(err);
@@ -62,15 +66,13 @@ async function removeLike(req, res, next) {
       cardId,
       { $pull: { likes: userId } },
       { new: true },
-    )
-      .populate('owner')
-      .populate('likes');
+    ).populate(['owner', 'likes']);
 
     if (!card) throw new NotFound('карточка не найдена');
 
     res.send(card);
   } catch (err) {
-    if (err.name === 'CastError') {
+    if (err.name instanceof CastError) {
       next(new BadRequest('переданы некорректные данные'));
     } else {
       next(err);
@@ -90,7 +92,7 @@ async function removeCard(req, res, next) {
 
     res.send(card);
   } catch (err) {
-    if (err.name === 'ValidationError' || err.name === 'CastError') {
+    if (err.name instanceof CastError) {
       next(new BadRequest('переданы некорректные данные'));
     } else {
       next(err);

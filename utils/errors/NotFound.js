@@ -1,8 +1,12 @@
+const {
+  constants: { HTTP_STATUS_NOT_FOUND },
+} = require('http2');
+
 class NotFound extends Error {
   constructor(message) {
     super(message);
 
-    this.statusCode = 404;
+    this.statusCode = HTTP_STATUS_NOT_FOUND;
   }
 }
 
