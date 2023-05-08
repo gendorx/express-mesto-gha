@@ -34,14 +34,14 @@ async function createCard(req, res, next) {
   }
 }
 
-async function addLike(req, res, next) {
+async function toggleLike(fnName, req, res, next) {
   const { cardId } = req.params;
   const userId = req.user._id;
 
   try {
     const card = await Card.findByIdAndUpdate(
       cardId,
-      { $addToSet: { likes: userId } },
+      { [fnName]: { likes: userId } },
       { new: true },
     ).populate(['owner', 'likes']);
 
@@ -49,6 +49,7 @@ async function addLike(req, res, next) {
 
     res.send(card);
   } catch (err) {
+    console.log(err);
     if (err instanceof CastError) {
       next(new BadRequest('переданы некорректные данные'));
     } else {
@@ -57,27 +58,12 @@ async function addLike(req, res, next) {
   }
 }
 
-async function removeLike(req, res, next) {
-  const { cardId } = req.params;
-  const userId = req.user._id;
+function addLike(req, res, next) {
+  return toggleLike('$addToSet', req, res, next);
+}
 
-  try {
-    const card = await Card.findByIdAndUpdate(
-      cardId,
-      { $pull: { likes: userId } },
-      { new: true },
-    ).populate(['owner', 'likes']);
-
-    if (!card) throw new NotFound('карточка не найдена');
-
-    res.send(card);
-  } catch (err) {
-    if (err.name instanceof CastError) {
-      next(new BadRequest('переданы некорректные данные'));
-    } else {
-      next(err);
-    }
-  }
+function removeLike(req, res, next) {
+  return toggleLike('$pull', req, res, next);
 }
 
 async function removeCard(req, res, next) {
@@ -92,7 +78,7 @@ async function removeCard(req, res, next) {
 
     res.send(card);
   } catch (err) {
-    if (err.name instanceof CastError) {
+    if (err instanceof CastError) {
       next(new BadRequest('переданы некорректные данные'));
     } else {
       next(err);
