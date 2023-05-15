@@ -18,11 +18,10 @@ async function getCards(req, res, next) {
 }
 
 async function createCard(req, res, next) {
-  const { name, link } = req.body;
   const userId = req.user._id;
 
   try {
-    const card = await Card.create({ name, link, owner: userId });
+    const card = await Card.create({ ...req.body, owner: userId });
 
     res.status(HTTP_STATUS_CREATED).send(card);
   } catch (err) {

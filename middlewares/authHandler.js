@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { AuthError } = require('../utils/errors');
 
-const { JWT_SECRET } = process.env;
+const { JWT_SECRET } = require('../utils/constants');
 
 const authError = new AuthError('требуется авторизация');
 
@@ -14,7 +14,7 @@ function authHandler(req, res, next) {
   }
 
   try {
-    const payload = jwt.verify(jwtCookie, JWT_SECRET || 'superpuperpassword');
+    const payload = jwt.verify(jwtCookie, JWT_SECRET);
 
     req.user = payload;
     next();

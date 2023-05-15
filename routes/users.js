@@ -1,23 +1,14 @@
 const express = require('express');
 const { celebrate, Joi } = require('celebrate');
-const { validateUrl } = require('../utils/utils');
+const { validatonUrl } = require('../utils/utils');
 
 const users = express.Router();
 const {
   getAllUsers,
   getUserById,
-  updateUserInfo,
-  updateUserAvatar,
+  updateUser,
   getCurrentUser,
 } = require('../controllers/users');
-
-function urlValidate(value) {
-  const isUrl = validateUrl(value);
-
-  if (!isUrl) throw new Error("it's not url");
-
-  return value;
-}
 
 users.get('/', getAllUsers);
 users.get('/me', getCurrentUser);
@@ -36,12 +27,12 @@ users.patch(
       name: Joi.string().required().min(2).max(30),
     },
   }),
-  updateUserInfo,
+  updateUser,
 );
 users.patch(
   '/me/avatar',
-  celebrate({ body: { avatar: Joi.string().required().custom(urlValidate) } }),
-  updateUserAvatar,
+  celebrate({ body: { avatar: Joi.string().required().custom(validatonUrl) } }),
+  updateUser,
 );
 
 module.exports = users;

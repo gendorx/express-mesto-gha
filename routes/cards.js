@@ -1,6 +1,6 @@
 const express = require('express');
 const { celebrate, Joi } = require('celebrate');
-const { validateUrl } = require('../utils/utils');
+const { validatonUrl } = require('../utils/utils');
 const {
   createCard,
   getCards,
@@ -17,7 +17,7 @@ cards.post(
   celebrate({
     body: {
       name: Joi.string().required().min(2).max(30),
-      link: Joi.string().required().custom(validateUrl),
+      link: Joi.string().required().custom(validatonUrl),
     },
   }),
   createCard,

@@ -1,23 +1,28 @@
 const express = require('express');
 const { celebrate, Joi } = require('celebrate');
-const validator = require('validator');
+const { validationEmail, validatonUrl } = require('../utils/utils');
 
 const { createUser, loginUser } = require('../controllers/auth');
 
 const auth = express.Router();
 
-function validateEmail(value, helpers) {
-  return validator.isEmail(value) ? value : helpers.error('email.invalid');
-}
+const authFields = {
+  email: Joi.string().required().custom(validationEmail),
+  password: Joi.string().required(),
+};
 
-const authValidator = celebrate({
-  body: {
-    email: Joi.required().custom(validateEmail),
-    password: Joi.string().required(),
-  },
-});
-
-auth.post('/signup', authValidator, createUser);
-auth.post('/signin', authValidator, loginUser);
+auth.post(
+  '/signup',
+  celebrate({
+    body: {
+      ...authFields,
+      name: Joi.string().required().min(2).max(30),
+      about: Joi.string().required().min(2).max(30),
+      avatar: Joi.string().required().custom(validatonUrl),
+    },
+  }),
+  createUser,
+);
+auth.post('/signin', celebrate(authFields), loginUser);
 
 module.exports = auth;

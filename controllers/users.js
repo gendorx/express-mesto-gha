@@ -42,11 +42,11 @@ async function getUserById(req, res, next) {
   }
 }
 
-async function updateUser(data, req, res, next) {
+async function updateUser(req, res, next) {
   const userId = req.user._id;
 
   try {
-    const user = await User.findByIdAndUpdate(userId, data, {
+    const user = await User.findByIdAndUpdate(userId, req.body, {
       runValidators: true,
       new: true,
     });
@@ -63,22 +63,9 @@ async function updateUser(data, req, res, next) {
   }
 }
 
-function updateUserInfo(req, res, next) {
-  const { name, about } = req.body;
-
-  return updateUser({ name, about }, req, res, next);
-}
-
-function updateUserAvatar(req, res, next) {
-  const { avatar } = req.body;
-
-  return updateUser({ avatar }, req, res, next);
-}
-
 module.exports = {
   getAllUsers,
   getUserById,
-  updateUserInfo,
-  updateUserAvatar,
+  updateUser,
   getCurrentUser,
 };

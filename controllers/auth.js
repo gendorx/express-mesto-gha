@@ -6,21 +6,36 @@ const bcrypt = require('bcrypt');
 
 const { AuthError, ConfictError } = require('../utils/errors');
 const User = require('../models/user');
+const { JWT_SECRET } = require('../utils/constants');
 
-const { JWT_SECRET } = process.env;
 const authError = new AuthError('Неправильно указаны данные авторизации');
 
 async function createUser(req, res, next) {
-  const { email, password } = req.body;
+  const {
+    email, password, name, about, avatar,
+  } = req.body;
 
   try {
-    let user = await User.findOne({ email }, { rawResult: true, fields: ['_id'] });
+    let user = await User.findOne(
+      { email },
+      { rawResult: true, fields: ['_id'] },
+    );
 
-    if (user) throw new ConfictError('пользователь с такой электронной почтой уже зарегистрирован');
+    if (user) {
+      throw new ConfictError(
+        'пользователь с такой электронной почтой уже зарегистрирован',
+      );
+    }
 
     const hashPassword = await bcrypt.hash(password, 10);
 
-    user = await User.create({ email, password: hashPassword });
+    user = await User.create({
+      email,
+      name,
+      about,
+      avatar,
+      password: hashPassword,
+    });
 
     res.status(HTTP_STATUS_CREATED).send(user);
   } catch (err) {
@@ -39,11 +54,7 @@ async function loginUser(req, res, next) {
     const isCorrectPassword = await bcrypt.compare(password, user.password);
     if (!isCorrectPassword) throw authError;
 
-    const token = jwt.sign(
-      { _id: user._id },
-      JWT_SECRET || 'superpuperpassword',
-      { expiresIn: '7d' },
-    );
+    const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
 
     res.send({
       token,
