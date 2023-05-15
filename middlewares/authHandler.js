@@ -6,15 +6,17 @@ const { JWT_SECRET } = require('../utils/constants');
 const authError = new AuthError('требуется авторизация');
 
 function authHandler(req, res, next) {
-  const { jwt: jwtCookie } = req.cookies;
+  let { authorization } = req.headers;
 
-  if (!jwtCookie) {
+  if (!authorization || !authorization.startWith('Bearer ')) {
     next(authError);
     return;
   }
 
+  authorization = authorization.replace('Bearer ');
+
   try {
-    const payload = jwt.verify(jwtCookie, JWT_SECRET);
+    const payload = jwt.verify(authorization, JWT_SECRET);
 
     req.user = payload;
     next();
