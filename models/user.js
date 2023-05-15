@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { isEmail } = require('validator');
+const { validateUrl } = require('../utils/utils');
 
 const userScheme = new mongoose.Schema({
   name: {
@@ -27,6 +28,7 @@ const userScheme = new mongoose.Schema({
   },
   avatar: {
     type: String,
+    validate: validateUrl,
     default:
       'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
   },

@@ -8,7 +8,7 @@ const { AuthError, ConfictError } = require('../utils/errors');
 const User = require('../models/user');
 const { JWT_SECRET } = require('../utils/constants');
 
-const authError = new AuthError('Неправильно указаны данные авторизации');
+const authError = new AuthError('передан неверный логин или пароль');
 
 async function createUser(req, res, next) {
   const {
@@ -34,7 +34,7 @@ async function createUser(req, res, next) {
     if (err.code === 11000) {
       next(
         new ConfictError(
-          'пользователь с такой электронной почтой уже зарегистрирован',
+          'при регистрации указан email, который уже существует на сервере',
         ),
       );
     } else {

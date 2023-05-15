@@ -3,7 +3,7 @@ const { AuthError } = require('../utils/errors');
 
 const { JWT_SECRET } = require('../utils/constants');
 
-const authError = new AuthError('требуется авторизация');
+const authError = new AuthError('необходима авторизация');
 
 function authHandler(req, res, next) {
   let authorization = req.get('authorization');

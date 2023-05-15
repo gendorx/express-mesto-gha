@@ -8,7 +8,7 @@ async function handleError(err, _req, res, _next) {
 
   if (!statusCode) {
     statusCode = HTTP_STATUS_INTERNAL_SERVER_ERROR;
-    message = 'Внутренняя ошибка сервера';
+    message = 'На сервере произошла ошибка';
   }
 
   res.status(statusCode).send({ message });
