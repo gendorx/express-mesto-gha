@@ -6,14 +6,14 @@ const { JWT_SECRET } = require('../utils/constants');
 const authError = new AuthError('требуется авторизация');
 
 function authHandler(req, res, next) {
-  let { authorization } = req.headers;
+  let authorization = req.get('authorization');
 
-  if (!authorization || !authorization.startWith('Bearer ')) {
+  if (!authorization || !authorization.startsWith('Bearer ')) {
     next(authError);
     return;
   }
 
-  authorization = authorization.replace('Bearer ');
+  authorization = authorization.replace('Bearer ', '');
 
   try {
     const payload = jwt.verify(authorization, JWT_SECRET);

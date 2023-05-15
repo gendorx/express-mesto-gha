@@ -6,8 +6,6 @@ const {
 async function handleError(err, _req, res, _next) {
   let { message, statusCode } = err;
 
-  console.log(err);
-
   if (!statusCode) {
     statusCode = HTTP_STATUS_INTERNAL_SERVER_ERROR;
     message = 'Внутренняя ошибка сервера';

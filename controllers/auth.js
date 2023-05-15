@@ -37,9 +37,10 @@ async function createUser(req, res, next) {
       password: hashPassword,
     });
 
-    delete user.password;
-
-    res.status(HTTP_STATUS_CREATED).send(user);
+    res.status(HTTP_STATUS_CREATED).send({
+      ...user.toJSON(),
+      password: undefined,
+    });
   } catch (err) {
     next(err);
   }
