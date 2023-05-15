@@ -23,6 +23,6 @@ auth.post(
   }),
   createUser,
 );
-auth.post('/signin', celebrate(authFields), loginUser);
+auth.post('/signin', celebrate({ body: authFields }), loginUser);
 
 module.exports = auth;
