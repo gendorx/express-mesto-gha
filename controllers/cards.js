@@ -72,7 +72,7 @@ async function removeCard(req, res, next) {
     const card = await Card.findById(cardId).populate('owner');
 
     if (!card) throw new NotFound('карточка не найдена');
-    if (card.owner._id !== userId) throw new ForbiddenError('невозможно удалить чужую карточку');
+    if (!card.owner._id.equals(userId)) throw new ForbiddenError('невозможно удалить чужую карточку');
 
     await card.deleteOne();
 
