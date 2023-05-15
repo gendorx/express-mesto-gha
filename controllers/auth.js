@@ -16,20 +16,9 @@ async function createUser(req, res, next) {
   } = req.body;
 
   try {
-    let user = await User.findOne(
-      { email },
-      { rawResult: true, fields: ['_id'] },
-    );
-
-    if (user) {
-      throw new ConfictError(
-        'пользователь с такой электронной почтой уже зарегистрирован',
-      );
-    }
-
     const hashPassword = await bcrypt.hash(password, 10);
 
-    user = await User.create({
+    const user = await User.create({
       email,
       name,
       about,
@@ -42,7 +31,15 @@ async function createUser(req, res, next) {
       password: undefined,
     });
   } catch (err) {
-    next(err);
+    if (err.code === 11000) {
+      next(
+        new ConfictError(
+          'пользователь с такой электронной почтой уже зарегистрирован',
+        ),
+      );
+    } else {
+      next(err);
+    }
   }
 }
 
