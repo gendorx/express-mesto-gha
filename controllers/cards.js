@@ -5,7 +5,7 @@ const {
   constants: { HTTP_STATUS_CREATED },
 } = require('http2');
 const Card = require('../models/card');
-const { NotFound, BadRequest } = require('../utils/errors');
+const { NotFound, BadRequest, ForbiddenError } = require('../utils/errors');
 
 async function getCards(req, res, next) {
   try {
@@ -67,11 +67,13 @@ function removeLike(req, res, next) {
 
 async function removeCard(req, res, next) {
   const { cardId } = req.params;
+  const userId = req.user._id;
 
   try {
     const card = await Card.findById(cardId).populate('owner');
 
     if (!card) throw new NotFound('карточка не найдена');
+    if (card.owner._id !== userId) throw new ForbiddenError('невозможно удалить чужую карточку');
 
     await card.deleteOne();
 

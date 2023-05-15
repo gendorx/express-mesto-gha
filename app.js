@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
+const { errors } = require('celebrate');
 const router = require('./routes');
 const handleError = require('./middlewares/handleError');
 
@@ -18,15 +19,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-app.use((req, _res, next) => {
-  req.user = {
-    _id: '6452695a3f51d2e294eaef7c',
-  };
-
-  next();
-});
-
 app.use(router);
+app.use(errors());
 app.use(handleError);
 
 app.listen(PORT);
